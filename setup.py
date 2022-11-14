@@ -13,6 +13,6 @@ setup(
     author_email='jcromerot@uni.pe',
     python_requires='>=3.8.0',
     license='MIT',
-    packages=find_packages(include=["loggig_api", "loggig_api.*"]),
+    packages=find_packages(include=["logging_api", "logging_api.*"]),
     install_requires=requirements
 )
