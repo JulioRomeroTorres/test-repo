@@ -8,7 +8,7 @@ setup(
     name='logging_api',
     version='0.1.1',
     description='Test logging',
-    url='https://github.com/Rimac-Seguros/coe-iaa-library-logging-v1',
+    url='https://github.com/JulioRomeroTorres/test-repo',
     author='Julio ',
     author_email='jcromerot@uni.pe',
     python_requires='>=3.8.0',
