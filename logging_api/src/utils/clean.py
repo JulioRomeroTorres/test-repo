@@ -14,5 +14,5 @@ def get_positional_arguments(args: List[Any]) -> Dict:
         
     for index, v in enumerate(args):
         if isinstance(v, BaseModel):
-            res[str(index)] = json.loads(v.json())
+            response[str(index)] = json.loads(v.json())
     return response
