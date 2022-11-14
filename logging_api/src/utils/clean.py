@@ -9,9 +9,10 @@ def req2dict(reqData: Dict) -> Dict:
             request[k] = json.loads(v.json())
     return request
 
-def get_positional_arguments(args: List[Any]) -> List[str]:
-    res = []
-    for v in args:
+def get_positional_arguments(args: List[Any]) -> Dict:
+    response: Dict = dict()
+        
+    for index, v in enumerate(args):
         if isinstance(v, BaseModel):
-            res.append(json.loads(v.json()))
-    return res
+            res[str(index)] = json.loads(v.json())
+    return response
