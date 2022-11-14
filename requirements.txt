@@ -1,0 +1,2 @@
+google-cloud-logging >= '3.2.5'
+pydantic >= '1.10.2'
