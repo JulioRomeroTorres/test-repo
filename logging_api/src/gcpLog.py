@@ -24,7 +24,9 @@ class gcp_logger:
 
         def wrapper_aux(function) -> _TFunc :
             async def wrapper( *args, **kwargs ):
-                
+                print('a debuguear :', args)
+                print('a debuguear :', kwargs)
+                print(f"{level} and {time_out}")
                 json_request     = req2dict(kwargs)
                 json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
