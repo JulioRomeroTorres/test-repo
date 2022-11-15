@@ -5,9 +5,8 @@ class BaseLogger:
     def router(self, *, level: str, timeout: float):
         pass
 
-    def database(self, level: str, timeout: float):
+    def database(self, *, level: str, timeout: float):
         pass
 
-    def function(self, level: str, timeout: float):
+    def function(self, *, level: str, timeout: float):
         pass
-    
