@@ -8,6 +8,6 @@ log_types: Dict[str, Type[BaseLogger]] = {
     "gcp": GcpLogger,
 }
 
-def rimac_logger(t: str, name: str):
-    return log_types[t](name)
+def rimac_logger(type_logger: str, name: str):
+    return log_types[type_logger](name)
 
