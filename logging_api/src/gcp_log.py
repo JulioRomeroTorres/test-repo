@@ -6,6 +6,8 @@ import google.cloud.logging
 import contextvars
 import functools
 from .base_logger import BaseLogger
+import inspect
+import os
 
 from .utils.clean import req2dict, get_positional_arguments
 
@@ -30,15 +32,23 @@ class GcpLogger(BaseLogger):
                 json_request     = req2dict(kwargs)
                 json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
+
+                total_info = inspect.stack()
+                current_info   = total_info[2][0]
+                function_name   = current_info.f_code.co_name
+                file_name    = os.path.basename(current_info.f_code.co_filename)
+                line_number = current_info.f_lineno  
+                file_path = "%s:%d" % (file_name, line_number)
+
                 try:
                     fastApiResponse : JSONResponse = await function( *args, **kwargs )
                     json_response: Dict = json.loads(fastApiResponse.body.decode())
                     data_json = dict(
                             trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
-                            function_name = function.__name__,
+                            function_name = function_name,
                             ouput_logging = json_response,
-                            script_path =  __file__,
+                            script_path =  file_path,
                             elapsed_time_s= time.time()- start_time,
                             error_message= None,
                             level_logging = level
@@ -56,8 +66,8 @@ class GcpLogger(BaseLogger):
                             trace_id = self.trace_gcp.get(),
                             trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
-                            function_name = function.__name__,
-                            script_path =  __file__,
+                            function_name = function_name,
+                            script_path =  file_path,
                             error_message= str(e),
                             level_logging = "ERROR"
                         )
@@ -79,6 +89,13 @@ class GcpLogger(BaseLogger):
                 json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
                 fastApiResponse:JSONResponse = await function( *args, **kwargs )
+                
+                total_info = inspect.stack()
+                current_info   = total_info[2][0]
+                function_name   = current_info.f_code.co_name
+                file_name    = os.path.basename(current_info.f_code.co_filename)
+                line_number = current_info.f_lineno  
+                file_path = "%s:%d" % (file_name, line_number)
 
                 try:
                     json_response: Dict = json.loads(fastApiResponse.body.decode())
@@ -86,9 +103,9 @@ class GcpLogger(BaseLogger):
                             trace_id = self.trace_gcp.get(),
                             trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
-                            function_name = function.__name__,
+                            function_name = function_name,
                             ouput_logging = json_response,
-                            script_path =  __file__,
+                            script_path =  file_path,
                             elapsed_timeMs= time.time()- start_time,
                             error_message= None,
                             level_logging = level,
@@ -109,8 +126,8 @@ class GcpLogger(BaseLogger):
                             trace_id = self.trace_gcp.get(),
                             trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
-                            function_name = function.__name__,
-                            script_path =  __file__,
+                            function_name = function_name,
+                            script_path =  file_path,
                             error_message= str(e),
                             level_logging = "ERROR"
                         )
@@ -131,6 +148,13 @@ class GcpLogger(BaseLogger):
                 json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
                 fastApiResponse:JSONResponse = await function( *args, **kwargs )
+                
+                total_info = inspect.stack()
+                current_info   = total_info[2][0]
+                function_name   = current_info.f_code.co_name
+                file_name    = os.path.basename(current_info.f_code.co_filename)
+                line_number = current_info.f_lineno  
+                file_path = "%s:%d" % (file_name, line_number)
 
                 try:
                     json_response: Dict = json.loads(fastApiResponse.body.decode())
@@ -138,9 +162,9 @@ class GcpLogger(BaseLogger):
                             trace_id = self.trace_gcp.get(),
                             trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
-                            function_name = function.__name__,
+                            function_name = function_name,
                             ouput_logging = json_response,
-                            script_path =  __file__,
+                            script_path =  file_path,
                             elapsed_timeMs= time.time()- start_time,
                             error_message= None,
                             level_logging = level,
@@ -161,8 +185,8 @@ class GcpLogger(BaseLogger):
                             trace_id = self.trace_gcp.get(),
                             trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
-                            function_name = function.__name__,
-                            script_path =  __file__,
+                            function_name = function_name,
+                            script_path =  file_path,
                             error_message= str(e),
                             level_logging = "ERROR"
                         )
