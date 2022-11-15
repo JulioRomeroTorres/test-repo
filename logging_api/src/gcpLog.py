@@ -35,8 +35,8 @@ class gcp_logger:
                 try:
                     json_response: Dict = json.loads(fastApiResponse.body.decode())
                     data_json = dict(
-                            trace_id = self.logger_gcp.trace_gcp.get(),
-                            trace_aws = self.logger_gcp.trace_aws.get(),
+                            trace_id = self.trace_gcp.get(),
+                            trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
                             function_name = function.__name__,
                             ouput_logging = json_response,
@@ -55,8 +55,8 @@ class gcp_logger:
                 except Exception as e:
 
                     data_json = dict(
-                            trace_id = self.logger_gcp.trace_gcp.get(),
-                            trace_aws = self.logger_gcp.trace_aws.get(),
+                            trace_id = self.trace_gcp.get(),
+                            trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
                             function_name = function.__name__,
                             script_path =  __file__,
@@ -85,8 +85,8 @@ class gcp_logger:
                 try:
                     json_response: Dict = json.loads(fastApiResponse.body.decode())
                     data_json = dict(
-                            trace_id = self.logger_gcp.trace_gcp.get(),
-                            trace_aws = self.logger_gcp.trace_aws.get(),
+                            trace_id = self.trace_gcp.get(),
+                            trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
                             function_name = function.__name__,
                             ouput_logging = json_response,
@@ -108,8 +108,8 @@ class gcp_logger:
                 except Exception as e:
 
                     data_json = dict(
-                            trace_id = self.logger_gcp.trace_gcp.get(),
-                            trace_aws = self.logger_gcp.trace_aws.get(),
+                            trace_id = self.trace_gcp.get(),
+                            trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
                             function_name = function.__name__,
                             script_path =  __file__,
