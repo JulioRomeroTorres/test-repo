@@ -3,6 +3,7 @@ import json
 from .utils.clean import req2dict, get_positional_arguments
 import time
 from starlette.responses import JSONResponse
+from base_logger import BaseLogger
 
 import logging
 _TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
@@ -10,10 +11,10 @@ _TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
 logger = logging.getLogger('console')
 
 
-class general_logger:
+class ConsoleLogger(BaseLogger):
 
-    def log_api(self, level: str, timeout: float) -> _TFunc :
-        def wrapper_aux(function) -> _TFunc:
+    def router(self, level: str, timeout: float):
+        def wrapper_aux(function: _TFunc) -> _TFunc:
             async def wrapper( *args, **kwargs ):
                 
                 json_request     = req2dict(kwargs)
@@ -60,7 +61,7 @@ class general_logger:
             return wrapper
         return wrapper_aux
 
-    def log_db( self, level: str, time_out: float ) -> _TFunc:
+    def database( self, level: str, time_out: float ):
         def wrapper_aux(function) -> _TFunc :
             async def wrapper( *args, **kwargs ):
                 
@@ -112,5 +113,5 @@ class general_logger:
         
         return wrapper_aux
 
-    def log_routes(level: str, timeout: float):
+    def function(level: str, timeout: float):
         return True
