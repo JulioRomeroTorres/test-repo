@@ -4,6 +4,7 @@ import json
 import time
 import google.cloud.logging
 import contextvars
+import functools
 
 from .utils.clean import req2dict, get_positional_arguments
 
@@ -23,6 +24,7 @@ class gcp_logger:
     def log_api( self, level: str, time_out: float ) -> _TFunc:
 
         def wrapper_aux(function) -> _TFunc :
+            @functools.wraps(function)
             async def wrapper( *args, **kwargs ):
                 print('a debuguear :', args)
                 print('a debuguear :', kwargs)
