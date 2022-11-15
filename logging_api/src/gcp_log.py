@@ -5,7 +5,7 @@ import time
 import google.cloud.logging
 import contextvars
 import functools
-from base_logger import BaseLogger
+from .base_logger import BaseLogger
 
 from .utils.clean import req2dict, get_positional_arguments
 

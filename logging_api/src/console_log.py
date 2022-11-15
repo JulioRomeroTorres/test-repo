@@ -3,7 +3,7 @@ import json
 from .utils.clean import req2dict, get_positional_arguments
 import time
 from starlette.responses import JSONResponse
-from base_logger import BaseLogger
+from .base_logger import BaseLogger
 
 import logging
 _TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
