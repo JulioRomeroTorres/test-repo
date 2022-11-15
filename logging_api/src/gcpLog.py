@@ -30,9 +30,8 @@ class gcp_logger:
                 json_request     = req2dict(kwargs)
                 json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
-                fastApiResponse:JSONResponse = await function( *args, **kwargs )
-
                 try:
+                    fastApiResponse : JSONResponse = await function( *args, **kwargs )
                     json_response: Dict = json.loads(fastApiResponse.body.decode())
                     data_json = dict(
                             trace_id = self.trace_gcp.get(),
