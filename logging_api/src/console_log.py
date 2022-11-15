@@ -13,7 +13,7 @@ logger = logging.getLogger('console')
 
 class ConsoleLogger(BaseLogger):
 
-    def router(self, level: str, timeout: float):
+    def router(self, level: str, time_out: float):
         def wrapper_aux(function: _TFunc) -> _TFunc:
             async def wrapper( *args, **kwargs ):
                 
@@ -37,7 +37,7 @@ class ConsoleLogger(BaseLogger):
                             level_logging = level
                         )
                     
-                    if data_json['elapsed_timeMs'] > timeout:
+                    if data_json['elapsed_timeMs'] > time_out:
                         data_json['level_logging'] = "WARNING"
                         data_json['error_message'] = "Time Out in function"
 
@@ -113,5 +113,5 @@ class ConsoleLogger(BaseLogger):
         
         return wrapper_aux
 
-    def function(level: str, timeout: float):
+    def function(level: str, time_out: float):
         return True
