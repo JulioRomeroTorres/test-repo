@@ -15,7 +15,7 @@ class ConsoleLogger(BaseLogger):
 
     def __init__(self,name) -> None:
         self.trace_console = contextvars.ContextVar("console", default=None)
-        self.logger_console = logging.getLogger('name')
+        self.logger_console = logging.getLogger(name)
 
     def router( self, *, level: str = "DEBUG", time_out: float = 15.0 ):
 
@@ -63,7 +63,7 @@ class ConsoleLogger(BaseLogger):
                     
                     raise e
 
-                self.logger_console.debug(json.dump(data_json))
+                self.logger_console.debug(json.dumps(data_json))
 
                 return fastApiResponse
 
@@ -117,7 +117,7 @@ class ConsoleLogger(BaseLogger):
 
                     raise e
 
-                self.logger_console.debug(json.dump(data_json))
+                self.logger_console.debug(json.dumps(data_json))
                 return fastApiResponse
 
             return wrapper
@@ -172,7 +172,7 @@ class ConsoleLogger(BaseLogger):
 
                     raise e
                 
-                self.logger_console.debug(json.dump(data_json))
+                self.logger_console.debug(json.dumps(data_json))
 
                 return fastApiResponse
 
