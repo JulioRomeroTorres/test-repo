@@ -46,8 +46,8 @@ class GcpLogger(BaseLogger):
                     data_json = dict(
                             trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
-                            function_name = function_name,
-                            total_info = str(total_info),
+                            function_name = function.__name__,
+                            total_info = function.__file__,
                             ouput_logging = json_response,
                             script_path =  file_path,
                             elapsed_time_s= time.time()- start_time,
