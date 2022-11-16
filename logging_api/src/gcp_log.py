@@ -6,9 +6,8 @@ import google.cloud.logging
 import contextvars
 import functools
 from .base_logger import BaseLogger
-import inspect
-import os
 
+from .utils.file_information import get_path_file
 from .utils.clean import req2dict, get_positional_arguments
 
 _TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
@@ -24,179 +23,167 @@ class GcpLogger(BaseLogger):
     def send_logging_to_gcp(self, data_json):
         self.logger_gcp.log_struct(data_json, severity=data_json['level_logging'], trace = self.trace_gcp.get())
 
-    def router( self, level: str = "DEBUG", time_out: float = 15.0 ):
+    def router( self, *, level: str = "DEBUG", time_out: float = 15.0 ):
 
-        def wrapper_aux(function: _TFunc) -> _TFunc :
-            @functools.wraps(function)
+        def wrapper_aux(func: _TFunc) -> _TFunc :
+            @functools.wraps(func)
             async def wrapper( *args, **kwargs ):
                 json_request     = req2dict(kwargs)
                 json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
 
-                total_info = inspect.stack()
-                current_info   = total_info[2][0]
-                function_name   = current_info.f_code.co_name
-                file_name    = os.path.basename(current_info.f_code.co_filename)
-                line_number = current_info.f_lineno  
-                file_path = "%s:%d" % (file_name, line_number)
+                function_name, file_path = get_path_file()
 
-                try:
-                    fastApiResponse : JSONResponse = await function( *args, **kwargs )
-                    json_response: Dict = json.loads(fastApiResponse.body.decode())
-                    data_json = dict(
+                data_json = dict()
+                common_payload = dict(
                             trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
-                            function_name = function.__name__,
-                            total_info = function.__file__,
-                            ouput_logging = json_response,
+                            function_name = func.__name__,
                             script_path =  file_path,
-                            elapsed_time_s= time.time()- start_time,
-                            error_message= None,
                             level_logging = level
+                )
+                try:
+                    fastApiResponse : JSONResponse = await func( *args, **kwargs )
+                    json_response: Dict = json.loads(fastApiResponse.body.decode())
+                    
+                    success_payload  = dict(
+                            ouput_logging = json_response,
+                            elapsed_time_s= time.time()- start_time,
+                            error_message= None
                         )
                     
+                    data_json = { **common_payload, **success_payload}
+
                     if data_json['elapsed_time_s'] > time_out:
                         data_json['level_logging'] = "WARNING"
                         data_json['error_message'] = "Time Out in function"
 
-                    self.send_logging_to_gcp(data_json)
-
                 except Exception as e:
-
-                    data_json = dict(
-                            trace_id = self.trace_gcp.get(),
-                            trace_aws = self.trace_aws.get(),
-                            input_logging = {**json_request, **json_arguments},
-                            function_name = function_name,
-                            script_path =  file_path,
+                    
+                    fail_payload = dict(
                             error_message= str(e),
                             level_logging = "ERROR"
                         )
 
-                    self.send_logging_to_gcp(data_json)
+                    data_json = { **common_payload, **fail_payload}
+                    
                     raise e
+
+                self.send_logging_to_gcp(data_json)
+
                 return fastApiResponse
 
             return wrapper
         
         return wrapper_aux
     
-    def database( self, level: str = "INFO", time_out: float = 10.0 ) -> _TFunc:
+    def database( self,  *, level: str = "INFO", time_out: float = 10.0 ) -> _TFunc:
 
-        def wrapper_aux(function) -> _TFunc :
+        def wrapper_aux(func: _TFunc) -> _TFunc :
+            @functools.wraps(func)
             async def wrapper( *args, **kwargs ):
-                
                 json_request     = req2dict(kwargs)
                 json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
-                fastApiResponse:JSONResponse = await function( *args, **kwargs )
-                
-                total_info = inspect.stack()
-                current_info   = total_info[2][0]
-                function_name   = current_info.f_code.co_name
-                file_name    = os.path.basename(current_info.f_code.co_filename)
-                line_number = current_info.f_lineno  
-                file_path = "%s:%d" % (file_name, line_number)
 
-                try:
-                    json_response: Dict = json.loads(fastApiResponse.body.decode())
-                    data_json = dict(
-                            trace_id = self.trace_gcp.get(),
+                function_name, file_path = get_path_file()
+                
+                data_json = dict()
+                common_payload = dict(
                             trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
-                            function_name = function_name,
-                            ouput_logging = json_response,
+                            function_name = func.__name__,
                             script_path =  file_path,
-                            elapsed_timeMs= time.time()- start_time,
-                            error_message= None,
-                            level_logging = level,
-                            additionalParams = dict(
-                                        query = kwargs['query']
-                                    )
-                    )
+                            level_logging = level
+                )
+                try:
+                    fastApiResponse : JSONResponse = await func( *args, **kwargs )
+                    json_response: Dict = json.loads(fastApiResponse.body.decode())
                     
-                    if data_json['elapsed_timeMs'] > time_out:
+                    success_payload  = dict(
+                            ouput_logging = json_response,
+                            elapsed_time_s= time.time()- start_time,
+                            error_message= None
+                        )
+                    
+                    data_json = { **common_payload, **success_payload}
+
+                    if data_json['elapsed_time_s'] > time_out:
                         data_json['level_logging'] = "WARNING"
                         data_json['error_message'] = "Time Out in function"
 
-                    self.send_logging_to_gcp(data_json)
-
                 except Exception as e:
-
-                    data_json = dict(
-                            trace_id = self.trace_gcp.get(),
-                            trace_aws = self.trace_aws.get(),
-                            input_logging = {**json_request, **json_arguments},
-                            function_name = function_name,
-                            script_path =  file_path,
+                    
+                    fail_payload = dict(
                             error_message= str(e),
                             level_logging = "ERROR"
                         )
 
-                    self.send_logging_to_gcp(data_json)
+                    data_json = { **common_payload, **fail_payload}
+
                     raise e
+
+                self.send_logging_to_gcp(data_json)
                 return fastApiResponse
 
             return wrapper
         
         return wrapper_aux
 
-    def function( self, level: str, time_out: float ) -> _TFunc:
-        def wrapper_aux(function) -> _TFunc :
+    def function( self,  *, level: str, time_out: float ) -> _TFunc:
+        def wrapper_aux(func: _TFunc) -> _TFunc :
+            @functools.wraps(func)
             async def wrapper( *args, **kwargs ):
-                
                 json_request     = req2dict(kwargs)
                 json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
-                fastApiResponse:JSONResponse = await function( *args, **kwargs )
-                
-                total_info = inspect.stack()
-                current_info   = total_info[2][0]
-                function_name   = current_info.f_code.co_name
-                file_name    = os.path.basename(current_info.f_code.co_filename)
-                line_number = current_info.f_lineno  
-                file_path = "%s:%d" % (file_name, line_number)
 
-                try:
-                    json_response: Dict = json.loads(fastApiResponse.body.decode())
-                    data_json = dict(
-                            trace_id = self.trace_gcp.get(),
+                function_name, file_path = get_path_file()
+
+                data_json = dict()
+                common_payload = dict(
                             trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
-                            function_name = function_name,
-                            ouput_logging = json_response,
+                            function_name = func.__name__,
                             script_path =  file_path,
-                            elapsed_timeMs= time.time()- start_time,
-                            error_message= None,
-                            level_logging = level,
-                            additionalParams = dict(
-                                        query = kwargs['query']
-                                    )
-                    )
+                            level_logging = level
+                )
+
+                try:
+                    fastApiResponse : JSONResponse = await func( *args, **kwargs )
+                    json_response: Dict = json.loads(fastApiResponse.body.decode())
                     
-                    if data_json['elapsed_timeMs'] > time_out:
+                    success_payload  = dict(
+                            ouput_logging = json_response,
+                            elapsed_time_s= time.time()- start_time,
+                            error_message= None
+                        )
+                    
+                    data_json = { **common_payload, **success_payload}
+
+                    if data_json['elapsed_time_s'] > time_out:
                         data_json['level_logging'] = "WARNING"
                         data_json['error_message'] = "Time Out in function"
 
-                    self.send_logging_to_gcp(data_json)
+                    
 
                 except Exception as e:
-
-                    data_json = dict(
-                            trace_id = self.trace_gcp.get(),
-                            trace_aws = self.trace_aws.get(),
-                            input_logging = {**json_request, **json_arguments},
-                            function_name = function_name,
-                            script_path =  file_path,
+                    
+                    fail_payload = dict(
                             error_message= str(e),
                             level_logging = "ERROR"
                         )
 
-                    self.send_logging_to_gcp(data_json)
+                    data_json = { **common_payload, **fail_payload}
+
                     raise e
+                
+                self.send_logging_to_gcp(data_json)
+
                 return fastApiResponse
 
             return wrapper
+        
         return wrapper_aux
 
 
