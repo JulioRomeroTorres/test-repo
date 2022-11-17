@@ -10,7 +10,11 @@ from .base_logger import BaseLogger
 from .utils.file_information import get_path_file
 from .utils.clean import req2dict, get_positional_arguments
 
+import logging
+
 _TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
+
+loggerGcp = logging.getLogger("GCP")
 
 class GcpLogger(BaseLogger):
 
@@ -99,7 +103,7 @@ class GcpLogger(BaseLogger):
                 try:
                     fastApiResponse = func( *args, **kwargs )
                     #json_response: Dict = json.loads(fastApiResponse.body.decode())
-                    print(f"value: {fastApiResponse} and type {type(fastApiResponse)}")
+                    loggerGcp.debug(f"value: {fastApiResponse} and type {type(fastApiResponse)}")
                     success_payload  = dict(
                             ouput_logging = fastApiResponse,
                             elapsed_time_s= time.time()- start_time,
