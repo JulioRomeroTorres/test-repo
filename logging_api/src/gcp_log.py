@@ -24,8 +24,12 @@ class GcpLogger(BaseLogger):
         self.client = google.cloud.logging.Client()
         self.logger_gcp = self.client.logger(name)
     
-    def send_logging_to_gcp(self, data_json):
+    def send_logging_to_gcp(self, data_json) -> None:
         self.logger_gcp.log_struct(data_json, severity=data_json['level_logging'], trace = self.trace_gcp.get())
+
+    def set_trace(self, *, trace_gcp = None, trace_aws = None) -> None:
+        self.trace_aws = trace_aws
+        self.trace_gcp = trace_gcp
 
     def router( self, *, level: str = "DEBUG", time_out: float = 15.0 ):
 
