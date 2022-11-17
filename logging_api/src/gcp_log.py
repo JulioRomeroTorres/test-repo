@@ -95,15 +95,14 @@ class GcpLogger(BaseLogger):
             @functools.wraps(func)
             def wrapper( *args, **kwargs ):
                 json_request     = req2dict(kwargs)
-                json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
-
+                loggerGcp.debug(f"kwags : {kwargs} and json: {json_request} ")
                 function_name, file_path = get_path_file()
                 
                 data_json = dict()
                 common_payload = dict(
                             trace_aws = self.trace_aws.get(),
-                            input_logging = {**json_request, **json_arguments},
+                            input_logging = {**json_request},
                             function_name = func.__name__,
                             script_path =  file_path,
                             level_logging = level
@@ -111,7 +110,7 @@ class GcpLogger(BaseLogger):
                 try:
                     fastApiResponse = func( *args, **kwargs )
                     success_payload  = dict(
-                            ouput_logging = str(json.dumps(fastApiResponse, default=str)),
+                            ouput_logging = json.dumps(fastApiResponse, default=str),
                             elapsed_time_s= time.time()- start_time,
                             error_message= None,
                             additional_params = dict(
