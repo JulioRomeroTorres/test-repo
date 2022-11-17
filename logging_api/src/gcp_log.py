@@ -106,12 +106,6 @@ class GcpLogger(BaseLogger):
                 )
                 try:
                     fastApiResponse = func( *args, **kwargs )
-                    try:
-                        print(fastApiResponse.keys())
-                        print(fastApiResponse.values())
-                    except Exception as e:
-
-                        raise e
 
                     success_payload  = dict(
                             ouput_logging = json.dumps(fastApiResponse, default=str),
@@ -119,7 +113,7 @@ class GcpLogger(BaseLogger):
                             elapsed_time_s= time.time()- start_time,
                             error_message= None,
                             additional_params = dict(
-                                                query = str(args),
+                                                query = str(args[0].query_name),
                                                 database  = args[0].database
                             )
                         )
