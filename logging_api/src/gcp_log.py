@@ -27,9 +27,10 @@ class GcpLogger(BaseLogger):
     def send_logging_to_gcp(self, data_json) -> None:
         self.logger_gcp.log_struct(data_json, severity=data_json['level_logging'], trace = self.trace_gcp.get())
 
-    def set_trace(self, *, trace_gcp = None, trace_aws = None) -> None:
-        self.trace_aws = trace_aws
-        self.trace_gcp = trace_gcp
+    def set_trace(self, *, trace_gcp = None, trace_aws = None ) -> None:
+        
+        self.trace_aws.set(trace_aws)
+        self.trace_gcp.set(trace_gcp)
 
     def warning(self, message: str = "A error happended"):
         self.logger_gcp.log_text(message, severity="WARNING", trace = self.trace_gcp.get())
