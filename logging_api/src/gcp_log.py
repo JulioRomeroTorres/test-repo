@@ -31,6 +31,9 @@ class GcpLogger(BaseLogger):
         self.trace_aws = trace_aws
         self.trace_gcp = trace_gcp
 
+    def warning(self, message: str = "A error happended"):
+        self.logger_gcp.log_text(message, severity="WARNING", trace = self.trace_gcp.get())
+
     def router( self, *, level: str = "DEBUG", time_out: float = 15.0 ):
 
         def wrapper_aux(func: _TFunc) -> _TFunc :
@@ -106,10 +109,8 @@ class GcpLogger(BaseLogger):
                 )
                 try:
                     fastApiResponse = func( *args, **kwargs )
-                    #json_response: Dict = json.loads(fastApiResponse.body.decode())
-                    #loggerGcp.debug(f"value: {fastApiResponse} and type {type(fastApiResponse)}")
                     success_payload  = dict(
-                            ouput_logging = str(fastApiResponse),
+                            ouput_logging = str(json.dumps(fastApiResponse)),
                             elapsed_time_s= time.time()- start_time,
                             error_message= None,
                             additional_params = dict(
