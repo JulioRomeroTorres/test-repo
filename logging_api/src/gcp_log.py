@@ -108,6 +108,7 @@ class GcpLogger(BaseLogger):
                     fastApiResponse = func( *args, **kwargs )
                     success_payload  = dict(
                             ouput_logging = json.dumps(fastApiResponse, default=str),
+                            medium_logging = str(**fastApiResponse),
                             elapsed_time_s= time.time()- start_time,
                             error_message= None,
                             additional_params = dict(
@@ -115,6 +116,7 @@ class GcpLogger(BaseLogger):
                                                 database  = args[0].database
                             )
                         )
+                    
                     
                     data_json = { **common_payload, **success_payload}
 
