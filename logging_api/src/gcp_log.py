@@ -14,8 +14,6 @@ import logging
 
 _TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
 
-loggerGcp = logging.getLogger("GCP")
-
 class GcpLogger(BaseLogger):
 
     def __init__(self,name) -> None:
@@ -96,7 +94,6 @@ class GcpLogger(BaseLogger):
             def wrapper( *args, **kwargs ):
                 json_request     = req2dict(kwargs)
                 start_time = time.time()
-                loggerGcp.debug(f"kwags : {kwargs} and json: {json_request} ")
                 function_name, file_path = get_path_file()
                 
                 data_json = dict()
@@ -114,7 +111,7 @@ class GcpLogger(BaseLogger):
                             elapsed_time_s= time.time()- start_time,
                             error_message= None,
                             additional_params = dict(
-                                                query = args[0].query_name,
+                                                query = str(args),
                                                 database  = args[0].database
                             )
                         )
