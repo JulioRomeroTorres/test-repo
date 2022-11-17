@@ -85,7 +85,7 @@ class GcpLogger(BaseLogger):
 
         def wrapper_aux(func: _TFunc) -> _TFunc :
             @functools.wraps(func)
-            async def wrapper( *args, **kwargs ):
+            def wrapper( *args, **kwargs ):
                 json_request     = req2dict(kwargs)
                 json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
