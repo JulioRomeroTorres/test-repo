@@ -97,13 +97,17 @@ class GcpLogger(BaseLogger):
                             level_logging = level
                 )
                 try:
-                    fastApiResponse : JSONResponse = await func( *args, **kwargs )
-                    json_response: Dict = json.loads(fastApiResponse.body.decode())
+                    fastApiResponse = await func( *args, **kwargs )
+                    #json_response: Dict = json.loads(fastApiResponse.body.decode())
                     
                     success_payload  = dict(
-                            ouput_logging = json_response,
+                            ouput_logging = fastApiResponse,
                             elapsed_time_s= time.time()- start_time,
-                            error_message= None
+                            error_message= None,
+                            additional_params = dict(
+                                                query = args[0].query_name,
+                                                database  = args[0].database
+                            )
                         )
                     
                     data_json = { **common_payload, **success_payload}
