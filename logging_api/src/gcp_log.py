@@ -97,7 +97,7 @@ class GcpLogger(BaseLogger):
                             level_logging = level
                 )
                 try:
-                    fastApiResponse = await func( *args, **kwargs )
+                    fastApiResponse = func( *args, **kwargs )
                     #json_response: Dict = json.loads(fastApiResponse.body.decode())
                     
                     success_payload  = dict(
