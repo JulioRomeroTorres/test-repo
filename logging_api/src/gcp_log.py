@@ -102,7 +102,7 @@ class GcpLogger(BaseLogger):
                 data_json = dict()
                 common_payload = dict(
                             trace_aws = self.trace_aws.get(),
-                            input_logging = {**json_request},
+                            input_logging = kwargs,
                             function_name = func.__name__,
                             script_path =  file_path,
                             level_logging = level
