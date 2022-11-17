@@ -7,3 +7,5 @@ class DateEncoder(JSONEncoder):
     def default(self, obj: Any) -> Any:
         if isinstance(obj, (datetime.date, datetime.datetime) ):
             return obj.isoformat()
+
+
