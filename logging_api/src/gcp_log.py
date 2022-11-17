@@ -14,6 +14,8 @@ import logging
 
 _TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
 
+from .utils.encode_json import convert2json
+
 class GcpLogger(BaseLogger):
 
     def __init__(self,name) -> None:
@@ -105,11 +107,11 @@ class GcpLogger(BaseLogger):
                             level_logging = level
                 )
                 try:
-                    fastApiResponse = func( *args, **kwargs )
-
+                    dataBaseResponse = func( *args, **kwargs )
+                    #ouput_logging = json.dumps(dataBaseResponse, indent=2, default=str)
                     success_payload  = dict(
-                            ouput_logging = json.dumps(fastApiResponse, default=str),
-                            medium_logging = str(fastApiResponse),
+                            ouput_logging = convert2json(dataBaseResponse),
+                            medium_logging = str(dataBaseResponse),
                             elapsed_time_s= time.time()- start_time,
                             error_message= None,
                             additional_params = dict(
@@ -137,7 +139,7 @@ class GcpLogger(BaseLogger):
                     raise e
 
                 self.send_logging_to_gcp(data_json)
-                return fastApiResponse
+                return dataBaseResponse
 
             return wrapper
         
