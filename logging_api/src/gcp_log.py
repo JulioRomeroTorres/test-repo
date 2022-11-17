@@ -99,7 +99,7 @@ class GcpLogger(BaseLogger):
                 try:
                     fastApiResponse = func( *args, **kwargs )
                     #json_response: Dict = json.loads(fastApiResponse.body.decode())
-                    
+                    print(f"value: {fastApiResponse} and type {type(fastApiResponse)}")
                     success_payload  = dict(
                             ouput_logging = fastApiResponse,
                             elapsed_time_s= time.time()- start_time,
