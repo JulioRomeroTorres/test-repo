@@ -49,7 +49,7 @@ class GcpLogger(BaseLogger):
                             trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
                             path_address = func.__globals__['__file__'],
-                            line_path = inspect.getsourcelines(func)[2],
+                            line_path = inspect.getsourcelines(func)[1],
                             function_name = func.__name__,
                             script_path =  file_path,
                             level_logging = level
@@ -102,7 +102,7 @@ class GcpLogger(BaseLogger):
                             trace_aws = self.trace_aws.get(),
                             input_logging = kwargs,
                             path_address = func.__globals__['__file__'],
-                            line_path = inspect.getsourcelines(func)[2],
+                            line_path = inspect.getsourcelines(func)[1],
                             function_name = func.__name__,
                             script_path =  file_path,
                             level_logging = level
@@ -167,6 +167,7 @@ class GcpLogger(BaseLogger):
                                                "kwargs": str(kwargs)},
                             path_address = func.__globals__['__file__'],
                             function_name = func.__name__,
+                            line_path = inspect.getsourcelines(func)[1],
                             script_path =  file_path,
                             level_logging = level
                 )
