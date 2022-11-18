@@ -1,7 +1,7 @@
 from typing import Dict, Any, TypeVar, Callable
 import json
 from .utils.clean import req2dict, get_positional_arguments
-from .utils.file_information import get_path_file
+from .utils.function_info import get_path_file
 import time
 from starlette.responses import JSONResponse
 from .base_logger import BaseLogger
@@ -26,7 +26,7 @@ class ConsoleLogger(BaseLogger):
                 json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
 
-                function_name, file_path = get_path_file()
+                function_name, file_path = get_path_file(func)
 
                 data_json = dict()
                 common_payload = dict(
@@ -80,7 +80,7 @@ class ConsoleLogger(BaseLogger):
                 json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
 
-                function_name, file_path = get_path_file()
+                function_name, file_path = get_path_file(func)
                 
                 data_json = dict()
                 common_payload = dict(
@@ -132,7 +132,7 @@ class ConsoleLogger(BaseLogger):
                 json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
 
-                function_name, file_path = get_path_file()
+                function_name, file_path = get_path_file(func)
 
                 data_json = dict()
                 common_payload = dict(

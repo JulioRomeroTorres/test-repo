@@ -6,8 +6,7 @@ import google.cloud.logging
 import contextvars
 import functools
 from .base_logger import BaseLogger
-
-from .utils.func_info import get_path_file
+from .utils.function_info import get_path_file
 from .utils.clean import req2dict, get_positional_arguments
 from .utils.encode_json import convert2json, convert2dict
 import inspect
