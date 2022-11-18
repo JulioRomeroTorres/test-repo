@@ -34,7 +34,7 @@ class GcpLogger(BaseLogger):
 
     def warning(self, message: str = "A error happended"):
         self.logger_gcp.log_text(message, severity="WARNING", trace = self.trace_gcp.get())
-
+        
     def router( self, *, level: str = "DEBUG", time_out: float = 15.0 ):
 
         def wrapper_aux(func: _TFunc) -> _TFunc :
@@ -94,7 +94,6 @@ class GcpLogger(BaseLogger):
         def wrapper_aux(func: _TFunc) -> _TFunc :
             @functools.wraps(func)
             def wrapper( *args, **kwargs ):
-                json_request     = req2dict(kwargs)
                 start_time = time.time()
                 function_name, file_path = get_path_file()
                 
@@ -111,7 +110,6 @@ class GcpLogger(BaseLogger):
                     #ouput_logging = json.dumps(dataBaseResponse, indent=2, default=str)
                     success_payload  = dict(
                             ouput_logging = convert2json(dataBaseResponse),
-                            medium_logging = str(dataBaseResponse),
                             elapsed_time_s= time.time()- start_time,
                             error_message= None,
                             additional_params = dict(
@@ -148,28 +146,26 @@ class GcpLogger(BaseLogger):
     def function( self,  *, level: str, time_out: float ) -> _TFunc:
         def wrapper_aux(func: _TFunc) -> _TFunc :
             @functools.wraps(func)
-            async def wrapper( *args, **kwargs ):
-                json_request     = req2dict(kwargs)
-                json_arguments   = get_positional_arguments(list(args))
-                start_time = time.time()
+            def wrapper( *args, **kwargs ):
 
+                start_time = time.time()
                 function_name, file_path = get_path_file()
 
                 data_json = dict()
                 common_payload = dict(
                             trace_aws = self.trace_aws.get(),
-                            input_logging = {**json_request, **json_arguments},
+                            input_logging = { "args" : str(args),
+                                               "kwargs": str(kwargs)},
                             function_name = func.__name__,
                             script_path =  file_path,
                             level_logging = level
                 )
 
                 try:
-                    fastApiResponse : JSONResponse = await func( *args, **kwargs )
-                    json_response: Dict = json.loads(fastApiResponse.body.decode())
+                    generalResponse  = func( *args, **kwargs )
                     
                     success_payload  = dict(
-                            ouput_logging = json_response,
+                            ouput_logging = str(generalResponse),
                             elapsed_time_s= time.time()- start_time,
                             error_message= None
                         )
@@ -195,7 +191,7 @@ class GcpLogger(BaseLogger):
                 
                 self.send_logging_to_gcp(data_json)
 
-                return fastApiResponse
+                return generalResponse
 
             return wrapper
         
