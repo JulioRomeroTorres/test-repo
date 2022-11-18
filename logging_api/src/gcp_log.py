@@ -143,7 +143,7 @@ class GcpLogger(BaseLogger):
         
         return wrapper_aux
 
-    def function( self,  *, level: str, time_out: float ) -> _TFunc:
+    def function( self,  *, level: str = "INFO", time_out: float = 10.0) -> _TFunc:
         def wrapper_aux(func: _TFunc) -> _TFunc :
             @functools.wraps(func)
             def wrapper( *args, **kwargs ):
