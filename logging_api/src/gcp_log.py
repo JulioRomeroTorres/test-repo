@@ -47,6 +47,7 @@ class GcpLogger(BaseLogger):
                 common_payload = dict(
                             trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
+                            path_address = func.__globals__['__file__'],
                             function_name = func.__name__,
                             script_path =  file_path,
                             level_logging = level
@@ -98,6 +99,7 @@ class GcpLogger(BaseLogger):
                 common_payload = dict(
                             trace_aws = self.trace_aws.get(),
                             input_logging = kwargs,
+                            path_address = func.__globals__['__file__'],
                             function_name = func.__name__,
                             script_path =  file_path,
                             level_logging = level
@@ -154,6 +156,7 @@ class GcpLogger(BaseLogger):
                             trace_aws = self.trace_aws.get(),
                             input_logging = { "args" : str(args),
                                                "kwargs": str(kwargs)},
+                            path_address = func.__globals__['__file__'],
                             function_name = func.__name__,
                             script_path =  file_path,
                             level_logging = level
