@@ -7,6 +7,6 @@ def get_path_file(func):
     line_addres = inspect.getsourcelines(func)[1]
     function_name = func.__name__
 
-    function_path = "%s:%d" % (module_address, line_addres)
+    function_path = "%s:%d" % (module_address, line_addres+1)
 
     return [function_name, function_path]

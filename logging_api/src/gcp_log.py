@@ -7,7 +7,7 @@ import contextvars
 import functools
 from .base_logger import BaseLogger
 
-from .utils.file_information import get_path_file
+from .utils.func_info import get_path_file
 from .utils.clean import req2dict, get_positional_arguments
 from .utils.encode_json import convert2json, convert2dict
 import inspect
@@ -50,8 +50,7 @@ class GcpLogger(BaseLogger):
                             input_logging = {**json_request, **json_arguments},
                             function_name = info_function[0],
                             script_path =  info_function[1],
-                            level_logging = level,
-                            line_aux = str(inspect.getsourcelines(func)),
+                            level_logging = level
                 )
                 try:
                     fastApiResponse : JSONResponse = await func( *args, **kwargs )
@@ -102,8 +101,7 @@ class GcpLogger(BaseLogger):
                             input_logging = kwargs,
                             function_name = info_function[0],
                             script_path =  info_function[1],
-                            level_logging = level,
-                            line_aux = str(inspect.getsourcelines(func))
+                            level_logging = level
                 )
                 try:
                     dataBaseResponse = func( *args, **kwargs )
@@ -165,8 +163,7 @@ class GcpLogger(BaseLogger):
                                                "kwargs": str(kwargs)},
                             function_name = info_function[0],
                             script_path =  info_function[1],
-                            level_logging = level,
-                            line_aux = str(inspect.getsourcelines(func))
+                            level_logging = level
                 )
 
                 try:
