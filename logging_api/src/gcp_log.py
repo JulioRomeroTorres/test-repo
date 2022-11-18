@@ -10,6 +10,7 @@ from .base_logger import BaseLogger
 from .utils.file_information import get_path_file
 from .utils.clean import req2dict, get_positional_arguments
 from .utils.encode_json import convert2json, convert2dict
+import inspect
 
 _TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
 
@@ -48,6 +49,7 @@ class GcpLogger(BaseLogger):
                             trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
                             path_address = func.__globals__['__file__'],
+                            line_path = inspect.getsourcelines(func)[2],
                             function_name = func.__name__,
                             script_path =  file_path,
                             level_logging = level
@@ -100,6 +102,7 @@ class GcpLogger(BaseLogger):
                             trace_aws = self.trace_aws.get(),
                             input_logging = kwargs,
                             path_address = func.__globals__['__file__'],
+                            line_path = inspect.getsourcelines(func)[2],
                             function_name = func.__name__,
                             script_path =  file_path,
                             level_logging = level
@@ -107,26 +110,19 @@ class GcpLogger(BaseLogger):
                 try:
                     dataBaseResponse = func( *args, **kwargs )
                     #ouput_logging = json.dumps(dataBaseResponse, indent=2, default=str)
-                    try:
-                        if isinstance(dataBaseResponse, list):
-                            ouput_logging = convert2dict(dataBaseResponse[0])
-                            medium_logging = convert2json(dataBaseResponse[0])
 
-                        else:
-                            ouput_logging = convert2dict(dataBaseResponse)
-                            medium_logging = convert2json(dataBaseResponse)
-
-                    except Exception as e:
-                        raise e
+                    if isinstance(dataBaseResponse, list):
+                        ouput_logging = convert2dict(dataBaseResponse[0])
+                    else:
+                        ouput_logging = convert2dict(dataBaseResponse)
                     
                     success_payload  = dict(
                             
                             ouput_logging = ouput_logging,
-                            medium_logging = medium_logging,
                             elapsed_time_s= time.time()- start_time,
                             error_message= None,
                             additional_params = dict(
-                                                query = str(args[0].query_name),
+                                                query = args[0].query_name,
                                                 database  = args[0].database
                             )
                         )
