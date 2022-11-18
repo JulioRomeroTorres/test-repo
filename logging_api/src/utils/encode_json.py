@@ -13,8 +13,8 @@ def convert2json(data):
     return json.dumps(data, cls=DateEncoder)
     
 def convert2dict(current_dict):
+    new_dict = dict()
     for k,v in current_dict.items():
-        new_dict = dict()
         if isinstance(current_dict[k], dict):
             v = convert2dict(current_dict[k])
         if isinstance(current_dict[k], (datetime.date, datetime.datetime)):

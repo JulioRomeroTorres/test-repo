@@ -107,9 +107,22 @@ class GcpLogger(BaseLogger):
                 try:
                     dataBaseResponse = func( *args, **kwargs )
                     #ouput_logging = json.dumps(dataBaseResponse, indent=2, default=str)
+                    try:
+                        if isinstance(dataBaseResponse, list):
+                            ouput_logging = convert2dict(dataBaseResponse[0])
+                            medium_logging = convert2json(dataBaseResponse[0])
+
+                        else:
+                            ouput_logging = convert2dict(dataBaseResponse)
+                            medium_logging = convert2json(dataBaseResponse)
+
+                    except Exception as e:
+                        raise e
+                    
                     success_payload  = dict(
-                            ouput_logging = convert2json(dataBaseResponse[0]),
-                            medium_logging = convert2dict(dataBaseResponse[0]),
+                            
+                            ouput_logging = ouput_logging,
+                            medium_logging = medium_logging,
                             elapsed_time_s= time.time()- start_time,
                             error_message= None,
                             additional_params = dict(
