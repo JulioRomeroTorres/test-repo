@@ -1,12 +1,12 @@
 import inspect
 import os
 
-def get_path_file():
-    total_info = inspect.stack()
-    current_info   = total_info[2][0]
-    function_name   = current_info.f_code.co_name
-    file_name    = os.path.basename(current_info.f_code.co_filename)
-    line_number = current_info.f_lineno  
-    file_path = "%s:%d" % (file_name, line_number)
+def get_path_file(func):
 
-    return function_name, file_path
+    module_address = func.__globals__['__file__']
+    line_addres = inspect.getsourcelines(func)[1]
+    function_name = func.__name__
+
+    function_path = "%s:%d" % (module_address, line_addres)
+
+    return [function_name, function_path]

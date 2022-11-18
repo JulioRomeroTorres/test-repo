@@ -42,17 +42,16 @@ class GcpLogger(BaseLogger):
                 json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
 
-                function_name, file_path = get_path_file()
+                info_function = get_path_file()
 
                 data_json = dict()
                 common_payload = dict(
                             trace_aws = self.trace_aws.get(),
                             input_logging = {**json_request, **json_arguments},
-                            path_address = func.__globals__['__file__'],
-                            line_path = inspect.getsourcelines(func)[1],
-                            function_name = func.__name__,
-                            script_path =  file_path,
-                            level_logging = level
+                            function_name = info_function[0],
+                            script_path =  info_function[1],
+                            level_logging = level,
+                            line_aux = str(inspect.getsourcelines(func)),
                 )
                 try:
                     fastApiResponse : JSONResponse = await func( *args, **kwargs )
@@ -95,17 +94,16 @@ class GcpLogger(BaseLogger):
             @functools.wraps(func)
             def wrapper( *args, **kwargs ):
                 start_time = time.time()
-                function_name, file_path = get_path_file()
+                info_function = get_path_file()
                 
                 data_json = dict()
                 common_payload = dict(
                             trace_aws = self.trace_aws.get(),
                             input_logging = kwargs,
-                            path_address = func.__globals__['__file__'],
-                            line_path = inspect.getsourcelines(func)[1],
-                            function_name = func.__name__,
-                            script_path =  file_path,
-                            level_logging = level
+                            function_name = info_function[0],
+                            script_path =  info_function[1],
+                            level_logging = level,
+                            line_aux = str(inspect.getsourcelines(func))
                 )
                 try:
                     dataBaseResponse = func( *args, **kwargs )
@@ -158,18 +156,17 @@ class GcpLogger(BaseLogger):
             def wrapper( *args, **kwargs ):
 
                 start_time = time.time()
-                function_name, file_path = get_path_file()
+                info_function = get_path_file()
 
                 data_json = dict()
                 common_payload = dict(
                             trace_aws = self.trace_aws.get(),
                             input_logging = { "args" : str(args),
                                                "kwargs": str(kwargs)},
-                            path_address = func.__globals__['__file__'],
-                            function_name = func.__name__,
-                            line_path = inspect.getsourcelines(func)[1],
-                            script_path =  file_path,
-                            level_logging = level
+                            function_name = info_function[0],
+                            script_path =  info_function[1],
+                            level_logging = level,
+                            line_aux = str(inspect.getsourcelines(func))
                 )
 
                 try:
