@@ -42,7 +42,7 @@ class GcpLogger(BaseLogger):
                 json_arguments   = get_positional_arguments(list(args))
                 start_time = time.time()
 
-                info_function = get_path_file()
+                info_function = get_path_file(func)
 
                 data_json = dict()
                 common_payload = dict(
@@ -94,7 +94,7 @@ class GcpLogger(BaseLogger):
             @functools.wraps(func)
             def wrapper( *args, **kwargs ):
                 start_time = time.time()
-                info_function = get_path_file()
+                info_function = get_path_file(func)
                 
                 data_json = dict()
                 common_payload = dict(
@@ -156,7 +156,7 @@ class GcpLogger(BaseLogger):
             def wrapper( *args, **kwargs ):
 
                 start_time = time.time()
-                info_function = get_path_file()
+                info_function = get_path_file(func)
 
                 data_json = dict()
                 common_payload = dict(
