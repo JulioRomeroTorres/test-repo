@@ -9,7 +9,7 @@ from .base_logger import BaseLogger
 
 from .utils.file_information import get_path_file
 from .utils.clean import req2dict, get_positional_arguments
-from .utils.encode_json import convert2json
+from .utils.encode_json import convert2json, convert2dict
 
 _TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
 
@@ -106,7 +106,8 @@ class GcpLogger(BaseLogger):
                     dataBaseResponse = func( *args, **kwargs )
                     #ouput_logging = json.dumps(dataBaseResponse, indent=2, default=str)
                     success_payload  = dict(
-                            ouput_logging = str(dataBaseResponse),
+                            ouput_logging = convert2json(dataBaseResponse[0]),
+                            medium_logging = convert2dict(dataBaseResponse[0]),
                             elapsed_time_s= time.time()- start_time,
                             error_message= None,
                             additional_params = dict(
