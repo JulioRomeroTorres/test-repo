@@ -10,7 +10,7 @@ class DateEncoder(JSONEncoder):
             return obj.isoformat()
     
 def convert2json(data):
-    return json.dumps(data, indent=4, cls=DateEncoder)
+    return json.dumps(data, cls=DateEncoder)
     
 def convert2dict(current_dict):
     for k,v in current_dict.items():
