@@ -26,22 +26,27 @@ class GcpLogger(BaseLogger):
     def send_logging_to_gcp(self, data_json) -> None:
         self.logger_gcp.log_struct(data_json, severity=data_json['level_logging'], trace = self.trace_gcp.get())
 
-    def set_trace(self, *, trace_gcp = None, trace_aws = None ) -> None:
+    def set_trace(self, *, gcp = None, aws = None ) -> None:
         
-        self.trace_aws.set(trace_aws)
-        self.trace_gcp.set(trace_gcp)
+        self.trace_aws.set(aws)
+        self.trace_gcp.set(gcp)
 
-    def warning(self, *, message: str = "A Warning happended", exception = None ):
+    def log_exception( self, severity:str, payload, exc_info: bool ):
         
         traceback_str = ""
         
-        if exception is not None:
-            traceback_str_aux = traceback.format_exception(etype=type(exception), value = exception, tb = exception.__traceback__)
+        if exc_info :
+            traceback_str_aux = traceback.format_exception(etype=type(payload), value = payload, tb = payload.__traceback__)
             traceback_str = "".join(traceback_str_aux)
+            self.logger_gcp.log_text(traceback_str, severity=severity, trace = self.trace_gcp.get())
 
-        
-        message = message + traceback_str
-        self.logger_gcp.log_text(message, severity="WARNING", trace = self.trace_gcp.get())
+        self.logger_gcp.log_text(payload, severity=severity, trace = self.trace_gcp.get())
+
+    def warning(self, payload, exc_info :bool = False):
+        self.log_exception("WARNING", payload, exc_info)
+    
+    def error(self, payload, exc_info :bool = False):
+        self.log_exception("ERROR", payload, exc_info)
     
     def debug(self, message: str = "Logging something here"):
         self.logger_gcp.log_text(message, severity="DEBUG", trace = self.trace_gcp.get())
