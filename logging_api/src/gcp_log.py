@@ -31,21 +31,21 @@ class GcpLogger(BaseLogger):
         self.trace_aws.set(trace_aws)
         self.trace_gcp.set(trace_gcp)
 
-    def warning(self, message: str = "A error happended", exc_info = None ):
+    def warning(self, message: str = "A error happended", exception = None ):
         
         traceback_str = ""
-
-        try:
-            pass
-        except Exception as e:
-            traceback_str_aux = traceback.format_exception(etype=type(e), value = e, tb = e.__traceback__)
+        
+        if exception is not None:
+            traceback_str_aux = traceback.format_exception(etype=type(exception), value = exception, tb = exception.__traceback__)
             traceback_str = "".join(traceback_str_aux)
+        
         '''
         if exc_info:
             if isinstance(exc_info, BaseException):
                 exc_info = (type(exc_info), exc_info, exc_info.__traceback__)
             elif not isinstance(exc_info, tuple):
                 exc_info = sys.exc_info()'''
+
         message = message + traceback_str
         self.logger_gcp.log_text(message, severity="WARNING", trace = self.trace_gcp.get())
     
