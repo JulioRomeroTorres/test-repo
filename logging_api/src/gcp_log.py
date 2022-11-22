@@ -31,7 +31,10 @@ class GcpLogger(BaseLogger):
 
     def warning(self, message: str = "A error happended"):
         self.logger_gcp.log_text(message, severity="WARNING", trace = self.trace_gcp.get())
-        
+    
+    def debug(self, message: str = "Logging something here"):
+        self.logger_gcp.log_text(message, severity="DEBUG", trace = self.trace_gcp.get())
+
     def router( self, *, level: str = "DEBUG", time_out: float = 15.0 ):
 
         def wrapper_aux(func: _TFunc) -> _TFunc :
