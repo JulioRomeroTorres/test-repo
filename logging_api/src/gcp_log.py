@@ -39,13 +39,6 @@ class GcpLogger(BaseLogger):
             traceback_str_aux = traceback.format_exception(etype=type(exception), value = exception, tb = exception.__traceback__)
             traceback_str = "".join(traceback_str_aux)
         
-        '''
-        if exc_info:
-            if isinstance(exc_info, BaseException):
-                exc_info = (type(exc_info), exc_info, exc_info.__traceback__)
-            elif not isinstance(exc_info, tuple):
-                exc_info = sys.exc_info()'''
-
         message = message + traceback_str
         self.logger_gcp.log_text(message, severity="WARNING", trace = self.trace_gcp.get())
     
