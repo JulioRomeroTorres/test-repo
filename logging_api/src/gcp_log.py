@@ -31,7 +31,7 @@ class GcpLogger(BaseLogger):
         self.trace_aws.set(trace_aws)
         self.trace_gcp.set(trace_gcp)
 
-    def warning(self, *, message: str = "A error happended", exception = None ):
+    def warning(self, *, message: str = "A Warning happended", exception = None ):
         
         traceback_str = ""
         
