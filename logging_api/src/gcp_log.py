@@ -39,7 +39,7 @@ class GcpLogger(BaseLogger):
             traceback_str_aux = traceback.format_exception(etype=type(payload), value = payload, tb = payload.__traceback__)
             traceback_str = "".join(traceback_str_aux)
             self.logger_gcp.log_text(traceback_str, severity=severity, trace = self.trace_gcp.get())
-
+            return 
         self.logger_gcp.log_text(payload, severity=severity, trace = self.trace_gcp.get())
 
     def warning(self, payload, exc_info :bool = False):
